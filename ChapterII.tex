@@ -1,0 +1,206 @@
+\chapter{REINFORCEMENT LEARNING}
+\thispagestyle{fancy}
+
+
+%==================================================================================
+	\section{Introduction}
+        Reinforcement learning (RL) is the one of the most researched areas in artificial intelligence and
+        machine learning, nowadays. In this approach an agent (also called a learner) is learning by interactions with a (possibly uncertain) environment. The agent learns what to do (how to map observed percepts to actions) to maximize (possibly discounted) cumulative reward, a.k.a reinforcement signal. The agent does not know, \textit{a priori}, what action to make, but has to explore (by trial-and-error) to understand which action provides the highest reward over the time by trial and error. Reinforcement learning consists in learning from a sequence of observed states, performed actions and received rewards.
+		\par
+		There are few differences when comparing reinforcement learning to supervised learning - the most popular learning paradigm studied in machine learning:
+		\begin{itemize}
+		    \item Supervised learning consists in learning from examples provided by an external supervisor, whereas in reinforcement learning an agent learns from its own experience (the task is defined in such way that a predefined dataset of examples is hard or even impossible to get, as opposed to the supervised learning). In other words, when it comes to committed error, a supervised learning agent knows exactly what it should have done, while a reinforcement learning agent only knows that an action was incorrect (and eventually to what extent it was incorrect).
+		    \item Reinforcement learning has to deal with exploration-exploitation dilemma (described later in this section), while there is no such dilemma in supervised learning.
+		    \item Reinforcement learning involves delayed rewards, while in supervised learning rewards are known immediately.
+		    \item In supervised learning, the evaluation of the system is separated from the learning phase, whereas in reinforcement learning evaluation phase is usually done simultaneously with learning - reinforcement learning is, usually, on-line learning, while supervised learning is, typically, off-line learning.
+		\end{itemize}
+		
+	\section{Markov Decision Process} \label{sec:21}
+	    Reinforcement learning can be formulated as a class of Markov Decision Process (MDP). An MDP is a discrete-time, stochastic control process, defined as a tuple ( $S$, $A$, $P$, $R$, $\gamma$ ), in which:
+	    \begin{itemize}
+	        \item $S$ is a finite set of states ($s_t \in S$, where $s_t$ is state observed at (discrete) time $t$),
+	        \item $A(s_t )$ is a finite set of possible actions in state $s_t$ ($a_t \in A(s_t ), A(s) \subset A$, where $a_t$ is action executed at time $t$),
+	        \item $P (s, a, s') = P(s_{t+1}=s'|s_0, a_0, s_1,..., s_{t-1}, a_{t-1}, s_t=s, a_t=a) = P(s_{t+1}=s'|s_t=s,a_t=a)$ is the probability, that executing action $a$ in state $s$ at time $t$ will lead to state $s'$ at time $t + 1$,
+	        \item $R(s, a)$ is function describing the immediate (or expected immediate) reward for taking action $a$ in state $s$,
+	        \item $\gamma$ is the discount factor, which denotes the difference in priorities between the immediate reward and future rewards. A reward received n time steps ahead is worth $\gamma^{  n - 1 }$ times less than the same reward obtained immediately ( $\gamma \in (0, 1]$ ).
+	    
+	    \end{itemize}
+	    \par
+        The reinforcement learning problem is such MDP where $R$ or $P$ are unknown, which means the agent has to learn how an action is good (the reward function), and where his actions lead (the transition probabilities). The agent follows policy that is, in general, a mapping from states to probabilities of executing each (possible) action $(\pi : S \to A)$. The policy could be deterministic, and depend only on the state, $\pi(s)$, or stochastic, $\pi(a|s)$, such that it defines a probability distribution over the actions, given a state.
+        
+    \section{Value Function}
+        The objective of a RL agent is to choose a policy which maximizes the expected sum of rewards. The sum of rewards is called as the return, $G_t$ , which is given as,
+        \begin{equation*}
+            G_t=r_t+r_{t+1}+r_{t+2}+...+r_{N}
+        \end{equation*}
+        where $N$ denotes the end of an episode, $t$ is the time index.
+        However, in most cases, the environment for RL agent is stochastic, meaning there's a degree of uncertainty whether the agent will get the same reward if we take the same action in the future. Therefore it's common to use the discounted future reward, which incorporates $\gamma$ into the reward equation, which gives:
+        \begin{equation*}
+            G_t=r_t+\gamma r_{t+1}+\gamma^2 r_{t+2}+...=\sum_{k=0}^{\infty}\gamma^k r_{t+k}
+        \end{equation*}
+        \par
+        In order to be able to decide what action to take at a particular instant, it is important for the agent to know how good it is for the agent to be in a particular state. A way of measuring the "goodness" of a state is the \textit{value function}. It is defined as the expected sum of rewards that the agent will receive while following a particular policy $\pi$ from a particular state s. The value function, $V_\pi(s)$ for policy $\pi$ is given by
+        
+        \begin{equation*}
+            V_\pi (s)=\mathbb{E}_\pi (G_t|s_t=s) = \mathbb{E}_\pi (\sum_{k=0}^{\infty}\gamma^k r_{t+k } | s_t=s )
+        \end{equation*}
+        
+        Similarly, an \textit{action value function}, also known as the $Q-function$, can be defined which is the expected sum of rewards while taking action a in state s and, thereafter, following policy $\pi$. The action value function, $Q_\pi (s, a)$ is given by
+        
+        \begin{equation} \label{eq:21}
+            Q_\pi (s,a)=\mathbb{E}_\pi (G_t|s_t=s,a_t=a) = \mathbb{E}_\pi (\sum_{k=0}^{\infty}\gamma^k r_{t+k } | s_t=s,a_t=a )
+        \end{equation}
+        
+        It is unusual that an agent receives accurate information about reward directly after performing each action, most of the time a future cumulative reward is delayed. For example, in any board game, it is hard to estimate how a single move will affect the overall game state. In such case, an agent may not receive any reward information until the end of the game. Thus, the learner must propagate the delayed reinforcement to previous states and actions that (implicitly) caused this reinforcement. This is known as \textit{temporal credit assignment problem}.
+        
+    \section{Bellman Equation}\label{sec:24}
+        The Bellman equations formulate the problem of maximizing the expected sum of rewards
+        in terms of a recursive relationship of a value function. A policy $\pi$ is considered better than
+        another policy $\pi'$ if the expected return of that policy is greater than $\pi'$ for all $s \in S$, which
+        implies, $V_\pi (s) \geq V_\pi' (s)$ for all $s \in S$. Thus, the optimal value function, $V_*(s)$ can be defined
+        as,
+        
+        \begin{equation*}
+            V_* (s)= \max V_\pi(s), \forall s \in S.
+        \end{equation*}
+        Similarly, the optimal \textit{action value function}, $Q_*(s,a)$ can be defined as,
+        \begin{equation*}
+            Q_* (s,a)= \max Q_\pi(s,a), \forall s \in S, a \in A.
+        \end{equation*}
+        Also, for an optimal policy, the following equation can be written,
+        \begin{equation} \label{eq:22}
+            V_* (s)= \max_{a \in A} Q_{\pi*}(s,a)
+        \end{equation}
+        Expanding equation (\ref{eq:22}) with (\ref{eq:21}),
+        \begin{equation} \label{eq:23}
+            \begin{split}
+                V_*(s) &=\max_{a}\E_{pi*}(G_t|s_t=s,a_t=a) \\
+                & = \max_{a}\E_{pi*}(\sum_{k=0}^{\infty}\gamma^k r_{t+k } | s_t=s,a_t=a ) \\
+                & = \max_{a}\sum_{s'}p(s'|s,a)[R(s,a,s')+\gamma V_*(s')]
+            \end{split}
+        \end{equation}
+        Equation (\ref{eq:23}) is known as the Bellman optimality equation for $V_*(s)$. The Bellman optimality equation for $Q_∗$ is
+        \begin{equation*}
+            \begin{split}
+                Q_*(s,a)& =\E(r_t+\gamma \max_{a'}Q_*(s_{t+1},a')|s_t=s,a_t=a) \\
+                & = \sum_{s'}p(s'|s,a)[R(s,a,s')+\gamma\max_{a'}Q_*(s',a')]
+            \end{split}
+        \end{equation*}
+        
+        If the transition probabilities and the reward functions are known, the Bellman optimality equations can be solved in an iterative fashion. This approach is known as \textit{Dynamic programming}. The algorithms which assume these probabilities to be known or estimate them online are collectively known as \textit{model-based} algorithms.
+        \par
+        But for most other algorithms, they assume the probabilities are not known and they estimate the policy and value function by performing rollouts on the system. These methods are known as model-free algorithms (Section \ref{sec:25}). Monte Carlo and temporal difference are the most common model-free algorithms used.
+    
+    \section{Model-Free Methods}\label{sec:25} 
+            Model-free methods can be applied to any reinforcement learning problem since they do not
+        require any model of the environment. Most model-free approaches either try to learn a value
+        function and infer an optimal policy from it (Value function based methods) or directly search
+        in the space of the policy parameters to find an optimal policy (Policy search methods).
+        Model-free approaches can also be classified as being either \textit{on-policy} or \textit{off-policy}. On-policy
+        methods use the current policy to generate actions and use it to update the current policy
+        while off-policy methods use a different exploratory policy to generate actions as compared
+        to the policy which is being updated. The following subsections look at various model-free
+        algorithms used, both value function based and policy search methods.
+        \subsection{Monte Carlo Methods}
+                Monte Carlo methods work on the idea of generalized policy iteration (GPI). The GPI is an
+        iterative scheme and is composed of two steps. The first step tries to build an approximation
+        of the value function based on the current policy, known as the \textit{policy evaluation} step. In the
+        second step, the policy is improved with respect to the current value function, known as the
+        \textit{policy improvement step}. In Monte Carlo methods, to estimate the value function, rollouts
+        are performed by executing the current policy on the system. The accumulated reward over
+        the entire episode and the distribution of states encountered is used to form an estimate of
+        the value function. The current policy is then estimated by making it directly greedy with
+        respect to the current value function. Using these two steps iteratively, it can be shown that
+        the algorithm converges to the optimal value function and policy. Though Monte Carlo methods are straightforward in their implementation, they require a large number of iterations for
+        their convergence and suffer from a large variance in their value function estimation.
+        \subsection{Temporal Difference}
+        Temporal difference (TD) builds on the idea on the GPI but differs from the Monte Carlo
+        methods in the policy evaluation step. Instead of using the total accumulated reward, the
+        methods calculate a temporal error, which is the difference of the new estimate of the value
+        function and the old estimate of the value function, by considering the reward received at the
+        current time step and use it to update the value function. This kind of an update reduces the
+        variance but increases the bias in the estimate of the value function. The update equation
+        for the value function is given by:
+        
+        \begin{equation}\label{eq:24}
+            V(s) \gets V(S) + \alpha[r+\gamma V(s') - V(s)]
+        \end{equation}
+        
+        where, $\alpha$ is the learning rate, $r$ is the reward received at the current time instant, $s'$ is the new state and $s$ is the old state. Thus, temporal difference methods update the value function at each time step, unlike the Monte Carlo methods which wait till the episode has ended to update the value function.
+        
+        \subsection{Q-Learning} \label{sec:253}
+            Watkins \cite{Watkins:1989} introduced an off-policy temporal difference algorithm known as $Q$learning.$Q$-learning is a model-free, temporal difference algorithm to learn action-value function for any Markov decision process. $Q$-learning is an off-policy method. It means that it learns the optimal strategy independently of the agent's behavior, in contrast to on-policy methods, which learn the policy being followed by the agent (including non-greedy, exploration steps). $Q$ learning is based on Bellman equation (Section \ref{sec:24}), thus, by applying temporal difference update (Equation \ref{eq:24}) into Bellman equation (Equation \ref{eq:21}), resulting in:
+            \begin{equation}\label{eq:25}
+                Q(s,a) \gets Q(s,a) + \alpha[R(s,a)+ \max_{a' \in A(s)} Q(s',a')-Q(s,a)], 
+            \end{equation}
+            where all of the parameters have the same meaning as (Equation \ref{eq:24}) and (\ref{eq:21}).
+            \par
+            In the most straightforward implementation of $Q$-learning, the state-action values are stored in a look-up table (LUT). Q-learning uses Equation (\ref{eq:25}) to iteratively update the value of $Q(s, a)$ by updating appropriate values in table $Q[S, A]$ where $S$ is a set of possible states and $A$ is a set of all possible actions. During the learning $Q[s, a]$ represents current estimate of $Q_*(s, a)$, where $Q_*$ is the optimal state-action value.
+            $Q$-learning algorithm with LUT algorithm is presented in Algorithm \ref{alg:1}:
+            \par
+            \begin{algorithm}[H]\label{alg:1}
+                For each possible state-action pair initialize table $Q[s,a]$ to zero\\
+                Observe current state $s$\\
+                \While{stop condition not satisfied}{
+                Select action $a$ (according to utility function for state $s$): \\
+                    $a= \argmax_{a'} Q(s',a')$ \\
+                Execute action $a$\\
+                Receive immediate reward $r$\\
+                Observe new state $s'$\\
+                Update Table Entry $Q[s,a]$ using the update rule: 
+                    $Q(s,a) \gets Q(s,a) + \alpha[R(s,a)+ \max_{a' \in A(s)} Q(s',a')-Q(s,a)],$ \\
+                Assume $s'$ as new state $s$\\
+                }
+            
+            \caption{Q Learning algorithm with LUT}
+            \end{algorithm}
+            \vspace{5mm}
+            
+            
+            In real world problems, keeping table $Q[S, A]$ for each action in each state is not possible,
+            because the state space is too large to consider explicitly each of the states. One has to use
+            approximation function  $\hat{Q}(s,a)$ instead, which advantage is that it also generalizes the acquired
+            knowledge over non-visited states. Such a function approximator is also a compromise between
+            the quality of approximation and the time necessary to learn.
+            The state is represented as a set of features $f_1 , f_2 , ..., f_n$,  where the number of features is
+            significantly lower than the number of possible states. The $Q$-function is parametrized by the
+            vectors of parameters $\theta$. During the learning process, only $\theta = (\theta_1 , \theta_2 , ..., \theta_n )$ parameters are subjected to learning. According to the Widrow-Hoff's \cite{Sutton81towardsa} rule, parameters should change along
+            the gradient in order to minimize the overall loss $L_\theta$, that is, the MSE (Mean Squared Error) of $Q$ :
+            \begin{equation*}
+                L_\theta=\frac{1}{2}(\hat{Q}(s,a)-Q(s,a))^2
+            \end{equation*}
+            The update rule for $\theta$ parameters in Q learning is as follows :
+            \begin{equation*}
+                \theta_i \gets \theta_i - \alpha \frac{\partial{L_\theta(s,a)}}{\partial{\theta_i}}=\theta_i - \alpha(\hat{Q}(s,a)-Q(s,a)) \frac{\partial{\hat{Q}(s,a)}}{\partial{\theta_i}}
+            \end{equation*}
+            Expanding it with (Equation \ref{eq:25})    
+            \begin{equation*}
+                \theta_i \gets \theta_i - \alpha(\hat{Q}(s,a)-(R(s,a)+ \max_{a' \in A(s)} Q(s',a')) \frac{\partial{\hat{Q}(s,a)}}{\partial{\theta_i}}
+            \end{equation*}
+            \par
+            The approximator $\hat{Q}(s,a)$ could be any function approximator, with the simplest one being linear approximator (linear combination) of state features with factors $\theta_1,\theta_2,\theta_3,..,\theta_n$:
+            \begin{equation*}
+                \hat{Q}(s,a)=\theta_1 f_1(s)+ \theta_2 f_2(s) + ... + \theta_n f_n(s)
+            \end{equation*}
+            
+            However, most of the real world problems require a more complex, nonlinear approximator, with the most popular one being \textit{artificial neural network}. This approach has been used successfully in many previous studies \cite{bingqiang} \cite{Dini12combiningq-learning}\cite{touzet}. Input to such a neural network is encoded state and output is Q-value for particular action. Actually, there are at least two options for neural network outputs: neural network could have number of outputs equal to the number of overall possible actions or there could be separated neural network for each action, where each neural network have only one output. This topic will be broadly discussed in Section \ref{sec:3}
+            
+            
+            
+            \section{$\epsilon$-greedy policy} \label{section:26}
+                $\epsilon$-greedy policy handles the exploration-exploitation dilemma. A greedy algorithm is an algorithm
+            that always takes whatever action seems to be the best according to the action-value function $Q$.
+            \par
+            A greedy agent might fall into a local optima. The $\epsilon$-greedy algorithm is almost a greedy algorithm,
+            because it exploits the best available option, but once in a while, it explores the other available
+            options. Using this strategy, either a random action is selected with probability $\epsilon$ or an action
+            defined by agent current policy $\pi$ is selected with probability 1 - $\epsilon$ .
+            \par
+             Epsilon can be fixed during the learning, but annealing it often leads to better results. For
+            example, the agent can initially start with $\epsilon$ = 1 (full exploration - always select a random action),
+            then, progressively with each game played, $\epsilon$ is decreased linearly towards $\epsilon_f$ value, reaching it
+            after $K$ played episodes. By using linear annealing of $\epsilon$, with each successive episode, the agent
+            uses an action provided by $Q$-function more frequently (agent is moving forwards to almost full
+            exploitation), ending with only few percent of random actions (e.g., $\epsilon_f = 0.01$, which means that
+            one in one hundred actions is selected by random) after a predefined number of episodes.
+            

@@ -1,0 +1,313 @@
+\documentclass[12pt,oneside,a4paper]{book}
+\usepackage [english]{babel}
+\usepackage {amsfonts}
+\usepackage {afterpage}
+\usepackage {amsmath}
+\usepackage {amsthm}
+\usepackage {mathtools}
+\usepackage {indentfirst}
+\usepackage {hyperref}
+\usepackage [top=4cm, bottom=3cm, left=4cm,right=3cm]{geometry}
+\usepackage [pdftex]{graphicx}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage {setspace}
+\usepackage{sectsty}
+\usepackage{longtable}
+\usepackage {tabularx}
+\usepackage{rotating}
+\usepackage {colortbl}
+\usepackage {multirow}
+\usepackage{sidecap}
+\usepackage {wrapfig}
+\usepackage{float}
+\usepackage{mdwlist}
+\setcounter{secnumdepth}{5}
+\usepackage{tocloft}
+\usepackage [table] {xcolor}
+\usepackage{mathptmx}   
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage{titlesec}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{fancyhdr} 
+\setcounter{tocdepth}{5}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage[boxruled]{algorithm2e}
+\usepackage[bw]{mcode}
+\usepackage{bchart}
+\usepackage{etoolbox}
+\usepackage{notoccite}
+\usepackage{enumitem}
+\AtBeginEnvironment{algorithm}{\setstretch{1.20}}
+\DeclareMathOperator*{\E}{\mathbb{E}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+%==================================================================================
+\lstset{%
+  breaklines=true
+}
+\DeclareRobustCommand{\actuarial}[2][]{% 
+\def\arraystretch{0}% 
+\setlength\arraycolsep{0.5pt}% 
+\setlength\arrayrulewidth{0.5pt}% 
+\setbox0=\hbox{$\scriptstyle#1#2$}% 
+\begin{array}[b]{*2{@{}>{\scriptstyle}c}|} 
+\cline{2-2}% 
+\rule[1.25pt]{0pt}{\ht0}% 
+#1 & #2% 
+\end{array}% 
+} 
+
+
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\renewcommand{\thefigure}{\arabic{chapter}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{chapter}.\arabic{table}}
+\renewcommand{\theequation}{\arabic{chapter}.\arabic{equation}}
+
+\renewcommand{\bibname}{\Large REFERENCES}
+\renewcommand{\listfigurename}{\Large LIST OF FIGURES}
+\renewcommand{\listtablename}{\Large LIST OF TABLES}
+
+
+
+\newtheorem{theorem}{Proposition}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\cftloftitlefont}{\hfill\Large\bfseries}
+\renewcommand{\cftafterloftitle}{\hfill}
+\renewcommand{\cftlottitlefont}{\hfill\Large\bfseries}
+\renewcommand{\cftafterlottitle}{\hfill}
+
+\titlespacing*{\chapter}{0pt}{-50pt}{20pt}
+\titleformat{\chapter}[display]
+{\bfseries\Large\centering}{\chaptertitlename \thechapter}{12pt}{\large}
+\titleformat{\bib}[display]
+{\bfseries\Large\centering}{\bibtitlename}{12pt}{\large}
+\titleformat*{\section}{\bfseries\normalsize}
+\titleformat*{\subsection}{\bfseries\normalsize}
+
+\renewcommand{\cftchapfont}{\normalsize}
+\renewcommand{\cftchappagefont}{\normalsize}
+\renewcommand{\cftchapdotsep}{\cftdotsep}
+
+\newcommand{\listappendixname}{APPENDIX}
+
+\newlistof[chapter]{appendix}{app}{\listappendixname}
+
+\newcommand\appcaption[1]{%
+\addcontentsline{app}{chapter}{#1}}
+\makeatletter
+\newcommand\listofappendices{%
+\chapter*{\listappendixname\sectionmark{\listappendixname}}\@starttoc{app}}
+\makeatother
+
+\fancyhead{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot{}
+\rfoot{\thepage}
+
+\chapterfont{\centering\sc}
+\chaptertitlefont{\centering}
+\onehalfspacing
+
+\begin{document}
+\setlength{\parindent}{1cm}
+\pagestyle{fancy}
+
+\renewcommand{\cftsetrmarg}{1cm}
+\renewcommand{\cftchappresnum}{CHAPTER }
+\newlength{\mylen}
+\settowidth{\mylen}{\cftchappresnum}
+\addtolength{\cftchapnumwidth}{\mylen}
+\renewcommand{\cftchapdotsep}{\cftnodots}
+
+\setlength{\cftchapindent}{.5in}
+\cftsetindents{chapter}{0cm}{3.1cm}
+\cftsetindents{subsection}{5.5em}{3.2em}
+
+\renewcommand{\cftfigpresnum}{Figure }
+\settowidth{\mylen}{\cftfigpresnum}
+\addtolength{\cftfignumwidth}{\mylen}
+
+\renewcommand{\cfttabpresnum}{Table }
+\settowidth{\mylen}{\cfttabpresnum}
+\addtolength{\cfttabnumwidth}{\mylen}
+
+\setlength{\cftbeforetoctitleskip}{-3em}
+
+\setlength{\cftbeforeloftitleskip}{-3em}
+\setlength{\cftbeforelottitleskip}{-3em}
+\setlength{\cftbeforechapskip}{0cm}
+\tolerance=1
+\emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+
+
+\setlength{\cftchapnumwidth}{0pt}
+\renewcommand{\cftchapaftersnumb}{\hspace{6.5em}}
+%==================================TITLE PAGE========================================
+
+\frontmatter
+%\renewcommand{\headrulewidth}{0pt}
+\rfoot{\thepage}
+\include{TitlePage}
+
+\rfoot{\thepage}
+
+%==================================KEASLIAN==========================================
+
+\setcounter{page}{3}
+\include{Keaslian}
+
+%============================PERSETUJUAN PEMBIMBING====================================
+
+\include{Pembimbing}
+	
+%=============================PERSETUJUAN PENGUJI======================================
+	
+\include{Penguji}	
+
+%==================================ABSTRACT=========================================
+%\addtocontents{toc}{\cftpagenumberson{chapter}}
+\include{Abstract}
+
+%==================================ABSTRAK==========================================
+
+%\include{Abstrak}
+%==================================FOREWORD========================================
+
+\include{Foreword}
+
+\renewcommand{\contentsname}{\hfill\bfseries\large TABLE OF CONTENTS \hfill\hfill}   
+
+\tocloftpagestyle{fancy}
+
+\begin{singlespace}
+\addcontentsline {toc}{chapter}{TABLE OF CONTENTS}{}
+\tableofcontents
+\pagebreak
+\end{singlespace}
+
+
+ \let\origaddvspace\addvspace
+ \renewcommand{\addvspace}[1]{}
+
+
+\renewcommand{\listfigurename}{\large LIST OF FIGURES}
+\listoffigures
+\thispagestyle{fancy}
+\addcontentsline {toc}{chapter}{LIST OF FIGURES}
+\pagebreak
+
+\renewcommand{\listtablename}{\large LIST OF TABLES}
+\listoftables
+\thispagestyle{fancy}
+\addcontentsline {toc}{chapter}{LIST OF TABLES}
+\pagebreak
+
+\renewcommand{\listalgorithmcfname}{\large LIST OF ALGORITHMS}
+
+\fancypagestyle{plain}{% Redefining plain page style
+  \fancyhf{} %clear all header and footer fields
+  \fancyfoot[RO]{\thepage}
+}%
+\fancyhf{} %clear all header and footer fields
+\fancyfoot[RO]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\pagestyle{fancy}% Fancy page style
+%\makeatletter
+%\let \ps@plain\ps@empty
+%\makeatother
+
+\addcontentsline {toc}{chapter}{LIST OF ALGORITHMS}
+\thispagestyle{empty}
+\listofalgorithms 
+
+
+ \renewcommand{\addvspace}[1]{\origaddvspace{#1}}
+%\pagebreak
+
+%\renewcommand{\listtablename}{\large LIST OF TABLES}
+
+%
+%\addcontentsline {toc}{chapter}{LIST OF TABLES}
+%\listoftables
+%\pagebreak
+%\thispagestyle{fancy}
+%\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+%\listofappendices
+%\addcontentsline {toc}{chapter}{LIST OF APPENDIX}{}
+
+%==================================================================================
+\mainmatter
+\linespread{1.6}
+\rfoot{\thepage}
+\renewcommand{\chaptername}{\large CHAPTER }
+
+%=================================CHAPTER I==========================================
+
+\include{ChapterI}
+
+%=================================CHAPTER II=========================================
+
+\include{ChapterII}
+
+%=================================CHAPTER III=========================================
+
+\include{ChapterIII}
+
+%=================================CHAPTER IV=========================================
+
+\include{ChapterIV}
+
+%=================================CHAPTER V=========================================
+
+\include{ChapterV}
+
+%=================================CHAPTER VI=========================================
+
+\include{ChapterVI}
+
+%=================================REFERENCES========================================
+\fancyhead{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot{}
+\rfoot{\thepage}
+\thispagestyle{fancy}
+\bibliographystyle{unsrt}
+\renewcommand{\bibname}{\large REFERENCES}
+
+
+\bibliography{References}
+\addcontentsline{toc}{chapter}{REFERENCES}
+\pagebreak
+
+%==================================APPENDIX=========================================
+	\appendix
+	\addcontentsline{toc}{chapter}{APPENDIX}
+	\appcaption{Appendix A\hspace{0.5cm}Code}
+	\thispagestyle{fancy}
+	\setcounter{page}{1}
+	\renewcommand{\thepage}{A-\arabic{page}}
+	\begin{singlespace}
+	\include{AppendixA}
+	\end{singlespace}
+%	\clearpage
+%	\pagenumbering{arabic}
+%	\renewcommand{\thepage}{B-\arabic{page}}
+%
+%	\appcaption{Lampiran B\hspace{0.5cm} Contoh Pengerjaan Prosedur Hibridisasi AG-SIB}
+%	\begin{singlespace}
+%	\include{appB}
+%	\end{singlespace}
+
+\end{document}
